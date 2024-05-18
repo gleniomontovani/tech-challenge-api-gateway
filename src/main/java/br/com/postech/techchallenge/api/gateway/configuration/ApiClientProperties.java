@@ -8,5 +8,7 @@ import lombok.Data;
 @ConfigurationProperties(prefix = "api.client.server")
 public class ApiClientProperties {
 
-	private String uri;
+	private String pedidoUri;
+	private String pagamentoUri;
+	private String producaoUri;
 }

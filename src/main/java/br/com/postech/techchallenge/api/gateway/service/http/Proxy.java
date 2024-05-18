@@ -18,7 +18,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import br.com.postech.techchallenge.api.gateway.configuration.ApiClientProperties;
 import br.com.postech.techchallenge.api.gateway.service.exception.BusinessException;
 import br.com.postech.techchallenge.api.gateway.service.serializer.DateDeserializer;
 import br.com.postech.techchallenge.api.gateway.service.serializer.DateSerializer;
@@ -56,9 +55,10 @@ public class Proxy implements HttpAdapter {
 	private static final String BEARER = "Bearer ";
 
 	private static final int OK = 200;
+	private static final int CREATED = 201;
 	private Jwt jwt;
 	private String resource;
-	private final ApiClientProperties apiProperties;
+	private String endPoint;
 
 	@Override
 	public <T> T get(Class<T> tipo) throws Exception {
@@ -69,12 +69,12 @@ public class Proxy implements HttpAdapter {
 		HttpGet request = null;
 		HttpResponse response = null;
 
-		log.info("Executando chamada get ao recurso: " + apiProperties.getUri() + this.resource + ". Tipo: " + tipo);
+		log.info("Executando chamada get ao recurso: " + this.endPoint + this.resource + ". Tipo: " + tipo);
 		try {
 
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpGet(apiProperties.getUri() + this.resource);
+			request = new HttpGet(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			response = client.execute(request);
@@ -103,12 +103,12 @@ public class Proxy implements HttpAdapter {
 		HttpGet request = null;
 		HttpResponse response = null;
 
-		log.info("Executando chamada get ao recurso: " + apiProperties.getUri() + this.resource);
+		log.info("Executando chamada get ao recurso: " + this.endPoint + this.resource);
 
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpGet(apiProperties.getUri() + this.resource);
+			request = new HttpGet(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			response = client.execute(request);
@@ -164,14 +164,14 @@ public class Proxy implements HttpAdapter {
 	}
 
 	@Override
-	public <T> T post(T objeto, Class<T> type) throws Exception {
+	public <V, T> V post(T objeto, Class<V> type) throws Exception {
 		HttpClient client = null;
 		HttpPost request = null;
 		HttpResponse response = null;
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpPost(apiProperties.getUri() + this.resource);
+			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			StringEntity objetoJson = new StringEntity(GSON.toJson(objeto), ContentType.APPLICATION_JSON);
@@ -193,7 +193,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpPost(apiProperties.getUri() + this.resource);
+			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeader(request);
 			StringEntity objetoJson = new StringEntity(GSON.toJson(objeto), ContentType.APPLICATION_JSON);
 			request.setEntity(objetoJson);
@@ -219,7 +219,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpPost(apiProperties.getUri() + this.resource);
+			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			StringEntity objetoJson = new StringEntity(GSON.toJson(objeto), ContentType.APPLICATION_JSON);
@@ -256,7 +256,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpPost(apiProperties.getUri() + this.resource);
+			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeaderFile(request);
 
 			FileEntity objetoJson = new FileEntity(objeto, ContentType.MULTIPART_FORM_DATA);
@@ -290,7 +290,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpPut(apiProperties.getUri() + this.resource);
+			request = new HttpPut(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			StringEntity objetoJson = new StringEntity(GSON.toJson(objeto), ContentType.APPLICATION_JSON);
@@ -319,7 +319,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpPut(apiProperties.getUri() + this.resource);
+			request = new HttpPut(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			StringEntity objetoJson = new StringEntity(GSON.toJson(objeto), ContentType.APPLICATION_JSON);
@@ -354,7 +354,45 @@ public class Proxy implements HttpAdapter {
 
 		return put(objeto);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <V, T> V put(T objeto, String pathParam, Class<V> type) throws Exception {
+		StringBuilder newURL = new StringBuilder(this.resource);
+		if (pathParam != null) {
+			newURL.append("/").append(pathParam);
+		}
+		setResource(newURL.toString());
 
+		return (V) put(objeto, type.getClass());
+	}
+
+	@Override
+	public <V, T> V put(T objeto, Class<V> type) throws Exception {
+		HttpClient client = null;
+		HttpPut request = null;
+		HttpResponse response = null;
+
+		try {
+			client = HttpClientBuilder.create().build();
+
+			request = new HttpPut(this.endPoint + this.resource);
+			this.configureHeader(request);
+
+			StringEntity objetoJson = new StringEntity(GSON.toJson(objeto), ContentType.APPLICATION_JSON);
+			request.setEntity(objetoJson);
+
+			response = client.execute(request);
+			return processarRetorno(response, type.getClass());
+
+		} catch (IOException e) {
+			tratarException(e);
+		} finally {
+			finalizar(request);
+		}
+		return null;
+	}
+	
 	@Override
 	public <T> T put(List<String> pathParam, T objeto) throws Exception {
 		StringBuilder newURL = new StringBuilder(this.resource);
@@ -377,7 +415,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpDelete(apiProperties.getUri() + this.resource);
+			request = new HttpDelete(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			response = client.execute(request);
@@ -400,11 +438,34 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
-			request = new HttpDelete(apiProperties.getUri() + this.resource);
+			request = new HttpDelete(this.endPoint + this.resource);
 			this.configureHeader(request);
 
 			response = client.execute(request);
 			return processarRetorno(response, objeto.getClass());
+
+		} catch (IOException e) {
+			tratarException(e);
+		} finally {
+			finalizar(request);
+		}
+		return null;
+	}
+	
+	@Override
+	public <V, T> V delete(T objeto, Class<V> type) throws Exception {
+		HttpClient client = null;
+		HttpDelete request = null;
+		HttpResponse response = null;
+
+		try {
+			client = HttpClientBuilder.create().build();
+
+			request = new HttpDelete(this.endPoint + this.resource);
+			this.configureHeader(request);
+
+			response = client.execute(request);
+			return processarRetorno(response, type.getClass());
 
 		} catch (IOException e) {
 			tratarException(e);
@@ -441,10 +502,14 @@ public class Proxy implements HttpAdapter {
 	private <T> T processarRetorno(HttpResponse response, Type classType) throws IOException, Exception {
 		T retorno = null;
 		int codigoRetorno = response.getStatusLine().getStatusCode();
-		if (OK == codigoRetorno) {
+		if (isReturnValid(codigoRetorno)) {
 			retorno = GSON.fromJson(getReader(response.getEntity().getContent()), classType);
 		}
 		return retorno;
+	}
+
+	private boolean isReturnValid(int codigoRetorno) {
+		return (OK == codigoRetorno) || (CREATED == codigoRetorno);
 	}
 
 	private void configureHeader(HttpMessage request) throws Exception {

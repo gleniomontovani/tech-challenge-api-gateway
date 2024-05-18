@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.postech.techchallenge.api.gateway.service.integracao.client.PagamentoService;
+import br.com.postech.techchallenge.api.gateway.model.response.pagamento.PagamentoResponse;
+import br.com.postech.techchallenge.api.gateway.service.integracao.client.pagamento.GatewayPagamentoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,11 +23,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GatewayPagemantoController {
 
-	private final PagamentoService service;
+	private final GatewayPagamentoService service;
 
 	@GetMapping(path = "/{numeroPedido}", produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> consultarPagamentoPorPedido(@AuthenticationPrincipal Jwt principal,
+	public ResponseEntity<PagamentoResponse> consultarPagamentoPorPedido(@AuthenticationPrincipal Jwt principal,
 			@PathVariable Long numeroPedido) throws Exception {
 
 		return new ResponseEntity<>(service.consultarPagamentoPorPedido(principal, numeroPedido), HttpStatus.OK);
@@ -34,7 +35,7 @@ public class GatewayPagemantoController {
 
 	@GetMapping(path = "/historico/{numeroPedido}", produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<List<T>> consultarHistoricoPagamentoPorPedido(@AuthenticationPrincipal Jwt principal,
+	public ResponseEntity<List<PagamentoResponse>> consultarHistoricoPagamentoPorPedido(@AuthenticationPrincipal Jwt principal,
 			@PathVariable Long numeroPedido) throws Exception {
 
 		return new ResponseEntity<>(service.consultarHistoricoPagamentoPorPedido(principal, numeroPedido),

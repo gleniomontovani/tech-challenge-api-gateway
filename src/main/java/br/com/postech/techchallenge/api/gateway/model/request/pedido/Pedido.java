@@ -1,4 +1,4 @@
-package br.com.postech.techchallenge.api.gateway.model;
+package br.com.postech.techchallenge.api.gateway.model.request.pedido;
 
 import java.util.List;
 

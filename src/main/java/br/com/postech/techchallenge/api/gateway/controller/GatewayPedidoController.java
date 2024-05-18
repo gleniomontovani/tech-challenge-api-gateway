@@ -18,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.postech.techchallenge.api.gateway.model.Pedido;
-import br.com.postech.techchallenge.api.gateway.service.integracao.client.PedidoService;
+import br.com.postech.techchallenge.api.gateway.model.request.pedido.Pedido;
+import br.com.postech.techchallenge.api.gateway.model.response.pedido.PedidoResponse;
+import br.com.postech.techchallenge.api.gateway.service.integracao.client.pedido.GatewayPedidoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,18 +28,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GatewayPedidoController {
 
-	private final PedidoService service;
+	private final GatewayPedidoService service;
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<List<T>> listarTodosPedidos(@AuthenticationPrincipal Jwt principal) throws Exception {
+	public ResponseEntity<List<PedidoResponse>> listarTodosPedidos(@AuthenticationPrincipal Jwt principal) throws Exception {
 
 		return new ResponseEntity<>(service.listarTodosPedidos(principal), HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/{numeroPedido}", produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> buscarPedido(@AuthenticationPrincipal Jwt principal, @PathVariable Long numeroPedido)
+	public ResponseEntity<PedidoResponse> buscarPedido(@AuthenticationPrincipal Jwt principal, @PathVariable Long numeroPedido)
 			throws Exception {
 
 		return new ResponseEntity<>(service.buscarPedido(principal, numeroPedido), HttpStatus.OK);
@@ -46,7 +47,7 @@ public class GatewayPedidoController {
 
 	@PostMapping(path = "/checkout", produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> fazerCheckoutFake(@AuthenticationPrincipal Jwt principal, @RequestBody Pedido pedido)
+	public ResponseEntity<PedidoResponse> fazerCheckoutFake(@AuthenticationPrincipal Jwt principal, @RequestBody Pedido pedido)
 			throws Exception {
 
 		return new ResponseEntity<>(service.fazerCheckoutFake(principal, pedido), HttpStatus.OK);
@@ -54,7 +55,7 @@ public class GatewayPedidoController {
 
 	@PutMapping(path = "/status", produces = MediaType.APPLICATION_JSON, params = { "numeroPedido", "statusPedido" })
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> atualizarStatusPedido(@AuthenticationPrincipal Jwt principal,
+	public ResponseEntity<PedidoResponse> atualizarStatusPedido(@AuthenticationPrincipal Jwt principal,
 			@RequestParam Long numeroPedido, @RequestParam Integer statusPedido) throws Exception {
 
 		return new ResponseEntity<>(service.atualizarStatusPedido(principal, numeroPedido, statusPedido), HttpStatus.OK);

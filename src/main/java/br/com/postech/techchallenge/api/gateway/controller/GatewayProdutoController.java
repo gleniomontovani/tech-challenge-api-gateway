@@ -18,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.postech.techchallenge.api.gateway.model.Produto;
-import br.com.postech.techchallenge.api.gateway.service.integracao.client.ProdutoService;
+import br.com.postech.techchallenge.api.gateway.model.request.pedido.Produto;
+import br.com.postech.techchallenge.api.gateway.model.response.pedido.ProdutoResponse;
+import br.com.postech.techchallenge.api.gateway.service.integracao.client.pedido.GatewayProdutoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,11 +28,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GatewayProdutoController {
 
-	private final ProdutoService service;
+	private final GatewayProdutoService service;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<List<T>> listarProdutos(@AuthenticationPrincipal Jwt principal, Integer categoria)
+	public ResponseEntity<List<ProdutoResponse>> listarProdutos(@AuthenticationPrincipal Jwt principal, Integer categoria)
 			throws Exception {
 
 		return new ResponseEntity<>(service.listarProdutos(principal, categoria), HttpStatus.OK);
@@ -39,7 +40,7 @@ public class GatewayProdutoController {
 
 	@GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> buscarProdutoPorId(@AuthenticationPrincipal Jwt principal, @PathVariable Long id)
+	public ResponseEntity<ProdutoResponse> buscarProdutoPorId(@AuthenticationPrincipal Jwt principal, @PathVariable Long id)
 			throws Exception {
 
 		return new ResponseEntity<>(service.buscarProdutoPorId(principal, id), HttpStatus.OK);
@@ -47,7 +48,7 @@ public class GatewayProdutoController {
 
 	@PostMapping(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> salvar(@AuthenticationPrincipal Jwt principal, @RequestBody Produto produto)
+	public ResponseEntity<ProdutoResponse> salvar(@AuthenticationPrincipal Jwt principal, @RequestBody Produto produto)
 			throws Exception {
 
 		return new ResponseEntity<>(service.salvar(principal, produto), HttpStatus.OK);
@@ -55,7 +56,7 @@ public class GatewayProdutoController {
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> atualizar(@AuthenticationPrincipal Jwt principal, @PathVariable Integer id,
+	public ResponseEntity<ProdutoResponse> atualizar(@AuthenticationPrincipal Jwt principal, @PathVariable Integer id,
 			@RequestBody Produto produto) throws Exception {
 
 		return new ResponseEntity<>(service.atualizar(principal, id, produto), HttpStatus.OK);
@@ -63,7 +64,7 @@ public class GatewayProdutoController {
 
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public <T> ResponseEntity<T> deleteById(@AuthenticationPrincipal Jwt principal, @PathVariable Long id)
+	public ResponseEntity<ProdutoResponse> deleteById(@AuthenticationPrincipal Jwt principal, @PathVariable Long id)
 			throws Exception {
 
 		return new ResponseEntity<>(service.deleteById(principal, id), HttpStatus.OK);

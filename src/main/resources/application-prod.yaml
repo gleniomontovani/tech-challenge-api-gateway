@@ -8,4 +8,6 @@ spring:
 api:
   client:
     server:
-      uri: ${URL_CLIENT_SERVER}
+      pedidoUri: ${URL_CLIENT_SERVER_PEDIDO}    
+      pagamentoUri: ${URL_CLIENT_SERVER_PAGAMENTO}
+      producaoUri: ${URL_CLIENT_SERVER_PRODUCAO}

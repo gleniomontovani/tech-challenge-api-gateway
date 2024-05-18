@@ -7,9 +7,12 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${COGNITO}
+          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_wQTJPAtFR
 
 api:
   client:
     server:
-      uri: ${URL_CLIENT_SERVER}
+      pedidoUri: http://localhost:8081/v1    
+      pagamentoUri: http://localhost:8082/v1
+      producaoUri: http://localhost:8083/v1
+      
