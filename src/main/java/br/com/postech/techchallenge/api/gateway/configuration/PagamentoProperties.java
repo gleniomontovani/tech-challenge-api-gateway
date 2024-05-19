@@ -10,4 +10,6 @@ public class PagamentoProperties {
 
 	private String byNumber;
 	private String history;
+	private String save;
+	private String update;
 }

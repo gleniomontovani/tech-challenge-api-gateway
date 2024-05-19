@@ -8,28 +8,20 @@ import java.util.Objects;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import br.com.postech.techchallenge.api.gateway.configuration.ApiClientProperties;
 import br.com.postech.techchallenge.api.gateway.configuration.PedidoProperties;
 import br.com.postech.techchallenge.api.gateway.model.request.pedido.Pedido;
 import br.com.postech.techchallenge.api.gateway.model.response.pedido.PedidoResponse;
-import br.com.postech.techchallenge.api.gateway.service.http.Proxy;
-import jakarta.annotation.PostConstruct;
+
+import br.com.postech.techchallenge.api.gateway.service.integracao.proxy.ServicoPedidoProxy;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class GatewayPedidoService {
 
-	private final Proxy proxy;
 	private final PedidoProperties properties;
-	private final ApiClientProperties apiProperties;
-	
-    @PostConstruct
-    public void initialization() {
-        if (Objects.nonNull(apiProperties)) {
-        	proxy.setEndPoint(apiProperties.getPedidoUri());
-        }
-    }
+	private final ServicoPedidoProxy proxy;
 	
 	public List<PedidoResponse> listarTodosPedidos(Jwt principal) throws Exception {
 		proxy.setJwt(principal);

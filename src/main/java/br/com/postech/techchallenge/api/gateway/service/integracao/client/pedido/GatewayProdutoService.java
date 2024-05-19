@@ -7,29 +7,19 @@ import java.util.Objects;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import br.com.postech.techchallenge.api.gateway.configuration.ApiClientProperties;
 import br.com.postech.techchallenge.api.gateway.configuration.ProdutoProperties;
 import br.com.postech.techchallenge.api.gateway.model.request.pedido.Produto;
 import br.com.postech.techchallenge.api.gateway.model.response.pedido.ProdutoResponse;
-import br.com.postech.techchallenge.api.gateway.service.http.Proxy;
-import jakarta.annotation.PostConstruct;
+import br.com.postech.techchallenge.api.gateway.service.integracao.proxy.ServicoPedidoProxy;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class GatewayProdutoService {
 
-	private final Proxy proxy;
 	private final ProdutoProperties properties;
-	private final ApiClientProperties apiProperties;
+	private final ServicoPedidoProxy proxy;
 	
-    @PostConstruct
-    public void initialization() {
-        if (Objects.nonNull(apiProperties)) {
-        	proxy.setEndPoint(apiProperties.getPedidoUri());
-        }
-    }
-
 	public List<ProdutoResponse> listarProdutos(Jwt principal, Integer categoria) throws Exception {
 		proxy.setJwt(principal);
 		proxy.setResource(properties.getListall());

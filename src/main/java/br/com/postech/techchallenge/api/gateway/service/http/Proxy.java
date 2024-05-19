@@ -19,8 +19,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import br.com.postech.techchallenge.api.gateway.service.exception.BusinessException;
+import br.com.postech.techchallenge.api.gateway.service.exception.Falha;
+import br.com.postech.techchallenge.api.gateway.service.exception.NotFoundException;
 import br.com.postech.techchallenge.api.gateway.service.serializer.DateDeserializer;
 import br.com.postech.techchallenge.api.gateway.service.serializer.DateSerializer;
+import br.com.postech.techchallenge.api.gateway.service.util.Constantes;
 import br.com.postech.techchallenge.api.gateway.service.util.Util;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -41,9 +44,7 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.stereotype.Component;
 
-@Component
 @Data
 @RequiredArgsConstructor
 @Slf4j
@@ -56,6 +57,11 @@ public class Proxy implements HttpAdapter {
 
 	private static final int OK = 200;
 	private static final int CREATED = 201;
+	private static final int BAD_REQUEST =  400;
+	private static final int UNAUTHORIZED = 401;
+	private static final int FORBIDDEN = 403;
+	private static final int NOT_FOUND = 404;
+	private static final int INTERNAL_SERVER_ERROR = 500;
 	private Jwt jwt;
 	private String resource;
 	private String endPoint;
@@ -83,7 +89,7 @@ public class Proxy implements HttpAdapter {
 				reader = getReader(response.getEntity().getContent());
 				objeto = GSON.fromJson(reader, tipo);
 			} else {
-				return processarRetorno(response, tipo);
+				return processarRetorno(response, MethodTypeEnum.GET, tipo);
 			}
 		} catch (IOException e) {
 			tratarException(e);
@@ -118,7 +124,7 @@ public class Proxy implements HttpAdapter {
 				reader = getReader(response.getEntity().getContent());
 				colecao = GSON.fromJson(reader, new ProxyTokenType<T>().getType());
 			} else {
-				return processarRetorno(response, type.getClass());
+				return processarRetorno(response, MethodTypeEnum.GET, type.getClass());
 			}
 
 		} catch (IOException e) {
@@ -178,7 +184,7 @@ public class Proxy implements HttpAdapter {
 			request.setEntity(objetoJson);
 
 			response = client.execute(request);
-			return processarRetorno(response, type.getClass());
+			return processarRetorno(response, MethodTypeEnum.POST, type);
 
 		} catch (Exception e) {
 			throw new BusinessException("Falha ao fazer a requisição ao servidor!");
@@ -200,7 +206,7 @@ public class Proxy implements HttpAdapter {
 
 			response = client.execute(request);
 
-			return processarRetorno(response, objeto.getClass());
+			return processarRetorno(response, MethodTypeEnum.POST, objeto.getClass());
 
 		} catch (Exception e) {
 			throw new BusinessException("Falha ao fazer a requisição ao servidor!");
@@ -232,7 +238,7 @@ public class Proxy implements HttpAdapter {
 				reader = getReader(response.getEntity().getContent());
 				colecao = GSON.fromJson(reader, new ProxyTokenType<V>().getType());
 			} else {
-				return processarRetorno(response, type.getClass());
+				return processarRetorno(response, MethodTypeEnum.POST, type.getClass());
 			}
 
 		} catch (IOException e) {
@@ -269,7 +275,7 @@ public class Proxy implements HttpAdapter {
 				reader = getReader(response.getEntity().getContent());
 				colecao = GSON.fromJson(reader, new ProxyTokenType<V>().getType());
 			} else {
-				return processarRetorno(response, type.getClass());
+				return processarRetorno(response, MethodTypeEnum.POST, type.getClass());
 			}
 
 		} catch (IOException e) {
@@ -297,7 +303,7 @@ public class Proxy implements HttpAdapter {
 			request.setEntity(objetoJson);
 
 			response = client.execute(request);
-			return processarRetorno(response, objeto.getClass());
+			return processarRetorno(response,MethodTypeEnum.PUT, objeto.getClass());
 
 		} catch (IOException e) {
 			tratarException(e);
@@ -332,7 +338,7 @@ public class Proxy implements HttpAdapter {
 				reader = getReader(response.getEntity().getContent());
 				colecao = GSON.fromJson(reader, new ProxyTokenType<V>().getType());
 			} else {
-				return processarRetorno(response, type.getClass());
+				return processarRetorno(response, MethodTypeEnum.PUT, type.getClass());
 			}
 
 		} catch (IOException e) {
@@ -355,7 +361,6 @@ public class Proxy implements HttpAdapter {
 		return put(objeto);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public <V, T> V put(T objeto, String pathParam, Class<V> type) throws Exception {
 		StringBuilder newURL = new StringBuilder(this.resource);
@@ -364,7 +369,7 @@ public class Proxy implements HttpAdapter {
 		}
 		setResource(newURL.toString());
 
-		return (V) put(objeto, type.getClass());
+		return (V) put(objeto, type);
 	}
 
 	@Override
@@ -383,7 +388,7 @@ public class Proxy implements HttpAdapter {
 			request.setEntity(objetoJson);
 
 			response = client.execute(request);
-			return processarRetorno(response, type.getClass());
+			return processarRetorno(response, MethodTypeEnum.PUT, type);
 
 		} catch (IOException e) {
 			tratarException(e);
@@ -411,7 +416,6 @@ public class Proxy implements HttpAdapter {
 		HttpClient client = null;
 		HttpDelete request = null;
 		HttpResponse response = null;
-
 		try {
 			client = HttpClientBuilder.create().build();
 
@@ -419,7 +423,7 @@ public class Proxy implements HttpAdapter {
 			this.configureHeader(request);
 
 			response = client.execute(request);
-			return processarRetorno(response, Boolean.class);
+			return processarRetorno(response, MethodTypeEnum.DELETE, Boolean.class);
 
 		} catch (IOException e) {
 			tratarException(e);
@@ -442,7 +446,7 @@ public class Proxy implements HttpAdapter {
 			this.configureHeader(request);
 
 			response = client.execute(request);
-			return processarRetorno(response, objeto.getClass());
+			return processarRetorno(response, MethodTypeEnum.DELETE, objeto.getClass());
 
 		} catch (IOException e) {
 			tratarException(e);
@@ -457,7 +461,6 @@ public class Proxy implements HttpAdapter {
 		HttpClient client = null;
 		HttpDelete request = null;
 		HttpResponse response = null;
-
 		try {
 			client = HttpClientBuilder.create().build();
 
@@ -465,7 +468,7 @@ public class Proxy implements HttpAdapter {
 			this.configureHeader(request);
 
 			response = client.execute(request);
-			return processarRetorno(response, type.getClass());
+			return processarRetorno(response, MethodTypeEnum.DELETE, type);
 
 		} catch (IOException e) {
 			tratarException(e);
@@ -499,11 +502,13 @@ public class Proxy implements HttpAdapter {
 		return delete();
 	}
 
-	private <T> T processarRetorno(HttpResponse response, Type classType) throws IOException, Exception {
+	private <T> T processarRetorno(HttpResponse response, MethodTypeEnum methodType, Type classType) throws IOException, Exception {
 		T retorno = null;
 		int codigoRetorno = response.getStatusLine().getStatusCode();
 		if (isReturnValid(codigoRetorno)) {
 			retorno = GSON.fromJson(getReader(response.getEntity().getContent()), classType);
+		}else {
+			processarError(response, methodType);
 		}
 		return retorno;
 	}
@@ -533,6 +538,45 @@ public class Proxy implements HttpAdapter {
 	private static void tratarException(IOException e) throws Exception {
 		String message = e.getMessage() != null ? e.getMessage() : "";
 		throw new BusinessException(message, e);
+	}
+	
+	private void processarError(HttpResponse response, MethodTypeEnum methodType) throws BusinessException, Exception {
+		StringBuilder strError = null;
+		try {
+			Falha detalhado = GSON.fromJson(getReader(response.getEntity().getContent()), Falha.class);
+			if (detalhado != null) {
+				strError = new StringBuilder();
+				strError.append(detalhado.getHttpStatus());
+				strError.append(Constantes.STRING_TRACO);
+				strError.append(detalhado.getMensagem());
+
+				log.error(strError.toString());
+				throw new BusinessException(detalhado.getHttpStatus(), detalhado.getMensagem());
+			}else {
+				tratarError(response, methodType, null);
+			}			
+		} catch (IOException e) {
+			tratarError(response, methodType, e);
+		} 
+	}
+
+	private static void tratarError(HttpResponse response, MethodTypeEnum methodType, Exception e)
+			throws BusinessException, Exception {
+		int codigoRetorno = response.getStatusLine().getStatusCode();
+		switch (codigoRetorno) {
+		case INTERNAL_SERVER_ERROR:
+			throw new Exception("Houve um erro no processamento da sua requisição, favor tente novamente mais tarde!");
+		case BAD_REQUEST:
+			throw new BusinessException("Sua requisição não é valida. Favor rever as informações e tente novamente!");
+		case UNAUTHORIZED:
+			throw new BusinessException("Requisição não autorizada!");
+		case FORBIDDEN:
+			throw new BusinessException("Essa requisição não é permitida!");
+		case NOT_FOUND:
+			throw new NotFoundException("Requisição não encontrada. Favar reveja as informações e tente novamente!");
+		default:
+			throw new Exception("Houve um erro no processamento da sua requisição, favor tente novamente mais tarde!");
+		}
 	}
 
 	private static void finalizar(Reader reader, HttpRequestBase request) {

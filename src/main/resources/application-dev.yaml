@@ -12,7 +12,7 @@ spring:
 api:
   client:
     server:
-      pedidoUri: http://localhost:8081/v1    
-      pagamentoUri: http://localhost:8082/v1
-      producaoUri: http://localhost:8083/v1
+      pedidoUri: "http://localhost:8081/v1"    
+      pagamentoUri: "http://localhost:8082/v1"
+      producaoUri: "http://localhost:8083/v1"
       

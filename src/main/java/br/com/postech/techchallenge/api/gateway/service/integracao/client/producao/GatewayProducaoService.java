@@ -7,13 +7,10 @@ import java.util.Objects;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import br.com.postech.techchallenge.api.gateway.configuration.ApiClientProperties;
 import br.com.postech.techchallenge.api.gateway.configuration.ProducaoProperties;
 import br.com.postech.techchallenge.api.gateway.model.request.producao.Producao;
 import br.com.postech.techchallenge.api.gateway.model.response.producao.ProducaoResponse;
-import br.com.postech.techchallenge.api.gateway.service.http.Proxy;
-
-import jakarta.annotation.PostConstruct;
+import br.com.postech.techchallenge.api.gateway.service.integracao.proxy.ServicoProducaoProxy;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,15 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class GatewayProducaoService {
 
 	private final ProducaoProperties properties;
-	private final ApiClientProperties apiProperties;
-	private final Proxy proxy;
-	
-    @PostConstruct
-    public void initialization() {
-        if (Objects.nonNull(apiProperties)) {
-        	proxy.setEndPoint(apiProperties.getPedidoUri());
-        }
-    }
+	private final ServicoProducaoProxy proxy;
     
     public List<ProducaoResponse> listarTodasProducaoPorSituacao(Jwt principal, Integer situacao) throws Exception {
     	proxy.setJwt(principal);		
@@ -59,6 +48,6 @@ public class GatewayProducaoService {
 		proxy.setJwt(principal);		
 		proxy.setResource(properties.getUpade());
 		
-		return proxy.post(producao, ProducaoResponse.class);
+		return proxy.put(producao, ProducaoResponse.class);
 	}
 }

@@ -7,12 +7,11 @@ import java.util.Objects;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import br.com.postech.techchallenge.api.gateway.configuration.ApiClientProperties;
 import br.com.postech.techchallenge.api.gateway.configuration.ClienteProperties;
 import br.com.postech.techchallenge.api.gateway.model.request.pedido.Cliente;
 import br.com.postech.techchallenge.api.gateway.model.response.pedido.ClienteResponse;
-import br.com.postech.techchallenge.api.gateway.service.http.Proxy;
-import jakarta.annotation.PostConstruct;
+import br.com.postech.techchallenge.api.gateway.service.integracao.proxy.ServicoPedidoProxy;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,16 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 public class GatewayClienteService {
 
 	private final ClienteProperties properties;
-	private final ApiClientProperties apiProperties;
-	private final Proxy proxy;
+	private final ServicoPedidoProxy proxy;
 	
-    @PostConstruct
-    public void initialization() {
-        if (Objects.nonNull(apiProperties)) {
-        	proxy.setEndPoint(apiProperties.getPedidoUri());
-        }
-    }
-
 	public List<ClienteResponse> listarClientes(Jwt jwt) throws Exception {
 		proxy.setJwt(jwt);		
 		proxy.setResource(properties.getListall());

@@ -40,6 +40,8 @@ api:
         path:
           byNumber: "/pagamentos"
           history: "/historico"
+          save: "/pagamentos"
+          upade: "/pagamentos"
       producao:
         path:    
           bySituacao: "/producao/situacao"

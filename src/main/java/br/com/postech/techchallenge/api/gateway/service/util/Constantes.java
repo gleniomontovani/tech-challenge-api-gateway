@@ -16,5 +16,6 @@ public class Constantes {
 
 	public static final String STRING_VAZIA = "";
 	public static final String STRING_ESPACO = " ";
+	public static final String STRING_TRACO = "-";
 	
 }
