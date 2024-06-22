@@ -1,8 +1,16 @@
  name: Build and Deploy API Gateway
 
+ # on:
+ #   pull_request:
+ #     branches: [main]
+
  on:
-   pull_request:
-     branches: [main]
+  workflow_dispatch:
+    inputs:
+      dir:
+        description: 'Directory with resources to make deploy'
+        required: true
+        default: 'tech-challenge-api-gateway'
 
  jobs:
    install-aws:
@@ -30,22 +38,11 @@
        - name: Checkout Code
          uses: actions/checkout@v3
 
-       - name: Download First Environment Variable 
+       - name: Download Environment Variable
          run: |
-           aws s3 cp s3://${{ secrets.AWS_BUCKET }}/${{ secrets.AWS_S3_BUCKET_SOURCE_APP }} download_first.txt
-           URL_CLIENT=$(cat download_first.txt)
-           cat download_first.txt
-           echo "URL_CLIENT=$URL_CLIENT" >> $GITHUB_ENV
-         env:
-           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-
-       - name: Download Second Environment Variable
-         run: |
-           aws s3 cp s3://${{ secrets.AWS_BUCKET }}/${{ secrets.AWS_S3_BUCKET_SOURCE_GATEWAY }} download_second.txt
-           URL_COGNITO=$(cat download_second.txt)
-           cat download_second.txt
+           aws s3 cp s3://${{ secrets.AWS_BUCKET }}/${{ secrets.AWS_S3_BUCKET_SOURCE_GATEWAY }} download.txt
+           URL_COGNITO=$(cat download.txt)
+           cat download.txt
            echo "URL_COGNITO=$URL_COGNITO" >> $GITHUB_ENV
          env:
            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -66,8 +63,8 @@
 
        - name: Build Docker Image
          run: |
-           docker build --build-arg URL_CLIENT=$URL_CLIENT --build-arg URL_COGNITO=$URL_COGNITO -t ${{ secrets.DOCKER_IMAGE }} .
-           rm download_first.txt && download_second.txt
+           docker build --build-arg URL_COGNITO=$URL_COGNITO -t ${{ secrets.DOCKER_IMAGE }} .
+           rm download.txt
            
        - name: Push Image Docker
          run: docker push ${{ secrets.DOCKER_IMAGE }}
@@ -99,4 +96,5 @@
 
        - name: Apply Kubernetes Configuration
          run: |
-           find k8s -name "*.yaml" -exec kubectl apply -f {} \;
+           kubectl create namespace ${{ secrets.NAMESPACE }} || true
+           find k8s -name "*.yaml" -exec kubectl apply -f {} --namespace=${{ secrets.NAMESPACE }} \;
