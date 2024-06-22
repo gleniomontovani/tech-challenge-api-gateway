@@ -88,6 +88,5 @@
 
        - name: Apply Kubernetes Configuration
          run: |
-           NAMESPACE=my-namespace
-           kubectl create namespace $NAMESPACE || true
-           find k8s -name "*.yaml" -exec kubectl apply -f {} --namespace=$NAMESPACE \;
+           kubectl create namespace ${{ secrets.NAMESPACE }} || true
+           find k8s -name "*.yaml" -exec kubectl apply -f {} --namespace=${{ secrets.NAMESPACE }} \;
