@@ -1,0 +1,15 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: tech-challenge-api-gateway-hpa
+  namespace: tech-challenge-pos-tech
+  labels:
+    app: tech-challenge-api-gateway
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: tech-challenge-api-gateway
+  minReplicas: 1 # ajuste conforme necessário
+  maxReplicas: 2 # ajuste conforme necessário
+  targetCPUUtilizationPercentage: 50 # ajuste conforme necessário

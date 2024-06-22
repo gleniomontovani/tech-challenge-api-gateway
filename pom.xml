@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.postech</groupId>
-	<artifactId>techchallenge.api.gateway</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>techchallenge-api-gateway</artifactId>
+	<version>1.0.0</version>
 	<name>techchallenge-api-gateway</name>
 	<description>API Gateway do Tech Challenge Pos Tech</description>
 	<properties>

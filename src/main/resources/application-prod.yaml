@@ -7,7 +7,7 @@ spring:
 
 api:
   client:
-    server:
-      pedidoUri: ${URL_CLIENT_SERVER_PEDIDO}    
-      pagamentoUri: ${URL_CLIENT_SERVER_PAGAMENTO}
-      producaoUri: ${URL_CLIENT_SERVER_PRODUCAO}
+    server:               
+      pedidoUri: http://tech-challenge-microservico-pedido-service:8081/v1    
+      pagamentoUri: http://tech-challenge-microservico-pagamento-service:8082/v1
+      producaoUri: http://tech-challenge-microservico-producao-service:8083/v1

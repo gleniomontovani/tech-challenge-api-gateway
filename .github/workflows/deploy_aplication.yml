@@ -1,0 +1,102 @@
+ name: Build and Deploy API Gateway
+
+ on:
+   pull_request:
+     branches: [main]
+
+ jobs:
+   install-aws:
+     runs-on: ubuntu-latest
+     name: Install AWS CLI
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@v3
+
+       - name: Install AWS CLI
+         run: |
+           sudo apt-get update
+           sudo apt-get install -y awscli
+
+   build:
+     runs-on: ubuntu-latest
+     needs: [install-aws]
+     name: Build the aplication
+     steps:
+       - name: Configure AWS Credentials
+         run: |
+           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+       - name: Checkout Code
+         uses: actions/checkout@v3
+
+       - name: Download First Environment Variable 
+         run: |
+           aws s3 cp s3://${{ secrets.AWS_BUCKET }}/${{ secrets.AWS_S3_BUCKET_SOURCE_APP }} download_first.txt
+           URL_CLIENT=$(cat download_first.txt)
+           cat download_first.txt
+           echo "URL_CLIENT=$URL_CLIENT" >> $GITHUB_ENV
+         env:
+           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+       - name: Download Second Environment Variable
+         run: |
+           aws s3 cp s3://${{ secrets.AWS_BUCKET }}/${{ secrets.AWS_S3_BUCKET_SOURCE_GATEWAY }} download_second.txt
+           URL_COGNITO=$(cat download_second.txt)
+           cat download_second.txt
+           echo "URL_COGNITO=$URL_COGNITO" >> $GITHUB_ENV
+         env:
+           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}    
+
+       - name: Setup Java
+         uses: actions/setup-java@v3
+         with:
+           distribution: 'temurin'
+           java-version: '17'
+
+       - name: Build Project
+         run: mvn clean install -DskipTests
+
+       - name: Login Docker Hub
+         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+       - name: Build Docker Image
+         run: |
+           docker build --build-arg URL_CLIENT=$URL_CLIENT --build-arg URL_COGNITO=$URL_COGNITO -t ${{ secrets.DOCKER_IMAGE }} .
+           rm download_first.txt && download_second.txt
+           
+       - name: Push Image Docker
+         run: docker push ${{ secrets.DOCKER_IMAGE }}
+
+   deploy:
+     runs-on: ubuntu-latest
+     needs: [install-aws, build]
+     name: Deployment the aplication
+     steps:
+       - name: Set Up AWS Credentials
+         uses: aws-actions/configure-aws-credentials@v1
+         with:
+           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+       - name: Checkout Repository
+         uses: actions/checkout@v3
+
+       - name: Install kubectl
+         run: |
+           curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+           chmod +x ./kubectl
+           sudo mv ./kubectl /usr/local/bin/kubectl
+
+       - name: Update EKS Kubeconfig
+         run: |
+           aws eks --region ${{ secrets.AWS_DEFAULT_REGION }} update-kubeconfig --name ${{ secrets.CLUSTER_NAME_EKS }}
+
+       - name: Apply Kubernetes Configuration
+         run: |
+           find k8s -name "*.yaml" -exec kubectl apply -f {} \;

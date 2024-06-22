@@ -177,6 +177,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
+			log.info("Executando chamada post ao recurso: " + this.endPoint + this.resource + ". Tipo: " + type);
 			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeader(request);
 
@@ -199,6 +200,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
+			log.info("Executando chamada post ao recurso: " + this.endPoint + this.resource);
 			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeader(request);
 			StringEntity objetoJson = new StringEntity(GSON.toJson(objeto), ContentType.APPLICATION_JSON);
@@ -224,7 +226,7 @@ public class Proxy implements HttpAdapter {
 
 		try {
 			client = HttpClientBuilder.create().build();
-
+			log.info("Executando chamada post ao recurso: " + this.endPoint + this.resource + ". Tipo: " + type);
 			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeader(request);
 
@@ -261,7 +263,7 @@ public class Proxy implements HttpAdapter {
 
 		try {
 			client = HttpClientBuilder.create().build();
-
+			log.info("Executando chamada post ao recurso: " + this.endPoint + this.resource + ". Tipo: " + type);
 			request = new HttpPost(this.endPoint + this.resource);
 			this.configureHeaderFile(request);
 
@@ -296,6 +298,7 @@ public class Proxy implements HttpAdapter {
 		try {
 			client = HttpClientBuilder.create().build();
 
+			log.info("Executando chamada put ao recurso: " + this.endPoint + this.resource);
 			request = new HttpPut(this.endPoint + this.resource);
 			this.configureHeader(request);
 
@@ -324,7 +327,7 @@ public class Proxy implements HttpAdapter {
 
 		try {
 			client = HttpClientBuilder.create().build();
-
+			log.info("Executando chamada put ao recurso: " + this.endPoint + this.resource + ". Tipo: " + type);
 			request = new HttpPut(this.endPoint + this.resource);
 			this.configureHeader(request);
 
@@ -380,7 +383,7 @@ public class Proxy implements HttpAdapter {
 
 		try {
 			client = HttpClientBuilder.create().build();
-
+			log.info("Executando chamada put ao recurso: " + this.endPoint + this.resource + ". Tipo: " + type);
 			request = new HttpPut(this.endPoint + this.resource);
 			this.configureHeader(request);
 
@@ -418,7 +421,7 @@ public class Proxy implements HttpAdapter {
 		HttpResponse response = null;
 		try {
 			client = HttpClientBuilder.create().build();
-
+			log.info("Executando chamada delete ao recurso: " + this.endPoint + this.resource);
 			request = new HttpDelete(this.endPoint + this.resource);
 			this.configureHeader(request);
 
@@ -441,7 +444,7 @@ public class Proxy implements HttpAdapter {
 
 		try {
 			client = HttpClientBuilder.create().build();
-
+			log.info("Executando chamada delete ao recurso: " + this.endPoint + this.resource);
 			request = new HttpDelete(this.endPoint + this.resource);
 			this.configureHeader(request);
 
@@ -463,7 +466,7 @@ public class Proxy implements HttpAdapter {
 		HttpResponse response = null;
 		try {
 			client = HttpClientBuilder.create().build();
-
+			log.info("Executando chamada delete ao recurso: " + this.endPoint + this.resource + ". Tipo: " + type);
 			request = new HttpDelete(this.endPoint + this.resource);
 			this.configureHeader(request);
 

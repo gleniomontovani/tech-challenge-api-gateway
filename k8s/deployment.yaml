@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tech-challenge-api-gateway
+  namespace: tech-challenge-pos-tech
+  labels:
+    app: tech-challenge-api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tech-challenge-api-gateway
+  template:
+    metadata:
+      labels:
+        app: tech-challenge-api-gateway
+    spec:
+      containers:
+        - name: tech-challenge-api-gateway
+          image: gleniomontovani/tech-challenge-api-gateway:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: COGNITO
+              value: https://cognito-idp.us-east-1.amazonaws.com/${URL_COGNITO}                            
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "500m"
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: dockerhub-secret
+                        
