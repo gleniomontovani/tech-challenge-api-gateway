@@ -1,3 +1,9 @@
+springdoc:
+  api-docs:
+    path: /v1/docs/api-gateway
+    disable-swagger-default-url: true
+    defaultModelsExpandDepth: -1
+
 spring:
   security:
     oauth2:

@@ -2,12 +2,18 @@
 #ID_USER_POOL_COGNITO -> us-east-1_vbdpFRKPg
 #URL COGNITO FINAL = URL_BASE_COGNITO + ID_USER_POOL_COGNITO
 
+springdoc:
+  api-docs:
+    path: /v1/docs/api-gateway
+    disable-swagger-default-url: true
+    defaultModelsExpandDepth: -1 
+
 spring:
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_FKpyRdv6A
+          issuer-uri: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_LBUv1Iah3
 
 api:
   client:

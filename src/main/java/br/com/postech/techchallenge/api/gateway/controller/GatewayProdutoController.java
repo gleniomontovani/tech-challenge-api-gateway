@@ -32,7 +32,7 @@ public class GatewayProdutoController {
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public ResponseEntity<List<ProdutoResponse>> listarProdutos(@AuthenticationPrincipal Jwt principal, Integer categoria)
+	public ResponseEntity<List<ProdutoResponse>> listarProdutos(@AuthenticationPrincipal Jwt principal, Long categoria)
 			throws Exception {
 
 		return new ResponseEntity<>(service.listarProdutos(principal, categoria), HttpStatus.OK);
@@ -56,7 +56,7 @@ public class GatewayProdutoController {
 
 	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
-	public ResponseEntity<ProdutoResponse> atualizar(@AuthenticationPrincipal Jwt principal, @PathVariable Integer id,
+	public ResponseEntity<ProdutoResponse> atualizar(@AuthenticationPrincipal Jwt principal, @PathVariable Long id,
 			@RequestBody Produto produto) throws Exception {
 
 		return new ResponseEntity<>(service.atualizar(principal, id, produto), HttpStatus.OK);

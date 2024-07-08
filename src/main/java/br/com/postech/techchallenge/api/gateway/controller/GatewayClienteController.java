@@ -22,13 +22,11 @@ import br.com.postech.techchallenge.api.gateway.model.response.pedido.ClienteRes
 import br.com.postech.techchallenge.api.gateway.service.integracao.client.pedido.GatewayClienteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 @RestController
 @RequestMapping("/v1/clientes")
 @RequiredArgsConstructor
 @Slf4j
 public class GatewayClienteController {
-
 	private final GatewayClienteService service;
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON)
@@ -42,23 +40,20 @@ public class GatewayClienteController {
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
 	public ResponseEntity<ClienteResponse> buscarCliente(@AuthenticationPrincipal Jwt principal,
 			@PathVariable("idCliente") Long idCliente) throws Exception {
-
 		return new ResponseEntity<>(service.buscarCliente(principal, idCliente), HttpStatus.OK);
 	}
 
-	@PostMapping(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@PostMapping(produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
 	public ResponseEntity<ClienteResponse> salvarCliente(@AuthenticationPrincipal Jwt principal, @RequestBody Cliente cliente)
 			throws Exception {
-
 		return new ResponseEntity<>(service.salvarCliente(principal, cliente), HttpStatus.OK);
 	}
 
-	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+	@PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON)
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
 	public ResponseEntity<ClienteResponse> atualizarCliente(@AuthenticationPrincipal Jwt principal, @PathVariable Long id,
 			@RequestBody Cliente cliente) throws Exception {
-
 		return new ResponseEntity<>(service.atualizarCliente(principal, id, cliente), HttpStatus.OK);
 	}
 
@@ -66,7 +61,6 @@ public class GatewayClienteController {
 	@PreAuthorize("hasAuthority('SCOPE_fiap/postech/techchallenge')")
 	public ResponseEntity<ClienteResponse> desativarCliente(@AuthenticationPrincipal Jwt principal, @PathVariable Long id)
 			throws Exception {
-
 		return new ResponseEntity<>(service.desativarCliente(principal, id), HttpStatus.OK);
 	}
 }

@@ -20,7 +20,7 @@ public class GatewayProdutoService {
 	private final ProdutoProperties properties;
 	private final ServicoPedidoProxy proxy;
 	
-	public List<ProdutoResponse> listarProdutos(Jwt principal, Integer categoria) throws Exception {
+	public List<ProdutoResponse> listarProdutos(Jwt principal, Long categoria) throws Exception {
 		proxy.setJwt(principal);
 		proxy.setResource(properties.getListall());
 		String pathParam = Objects.nonNull(categoria) ? String.valueOf(categoria) : null;
@@ -43,7 +43,7 @@ public class GatewayProdutoService {
 		return proxy.post(produto, ProdutoResponse.class);
 	}
 
-	public ProdutoResponse atualizar(Jwt principal, Integer id, Produto produto) throws Exception {
+	public ProdutoResponse atualizar(Jwt principal, Long id, Produto produto) throws Exception {
 		proxy.setJwt(principal);
 		proxy.setResource(properties.getUpdate());
 		String pathParam = Objects.nonNull(id) ? String.valueOf(id) : null;
