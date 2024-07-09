@@ -1,0 +1,488 @@
+{
+	"info": {
+		"_postman_id": "fd3c017e-c922-43ad-9594-7c5fac986119",
+		"name": "Tech Challenge - Arquitetura de Software - 4SOAT - GRUPO 68",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3488196",
+		"_collection_link": "https://multify.postman.co/workspace/Team-Workspace~106acfb5-c423-45db-8797-c8e0c9ed9cad/collection/3488196-fd3c017e-c922-43ad-9594-7c5fac986119?action=share&source=collection_link&creator=3488196"
+	},
+	"item": [
+		{
+			"name": "Produtos",
+			"item": [
+				{
+					"name": "Listar produtos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/produtos",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"produtos"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "LANCHE",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar produto por id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/produtos/:produtoId",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"produtos",
+								":produtoId"
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "LANCHE",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "produtoId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Atualizar produto",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"nome\": \"Batata show\",\r\n    \"categoria\": \"ACOMPANHAMENTO\",\r\n    \"valor\": 5.00,\r\n    \"descricao\": \"Batata frita\",\r\n    \"imagens\": [\r\n        {\r\n            \"path\": \"imagem 1\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/produtos",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"produtos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Novo produto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Batata\",\r\n    \"categoria\": 2,\r\n    \"valor\": 5.00,\r\n    \"descricao\": \"Batata frita\",\r\n    \"imagens\": [\r\n        \"imagem 1\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/produtos",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"produtos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deletar produto por id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/produtos/:produtoId",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"produtos",
+								":produtoId"
+							],
+							"variable": [
+								{
+									"key": "produtoId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pedidos",
+			"item": [
+				{
+					"name": "Checkout pedido - Cliente não informado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dataPedido\": \"31/10/2023\",\r\n    \"statusPedido\": 1,\r\n    \"produtos\": [\r\n        {\r\n            \"produto\": {\r\n                \"id\": 1,\r\n                \"nome\": \"Batata\",\r\n                \"categoria\": \"ACOMPANHAMENTO\",\r\n                \"valor\": 5.00,\r\n                \"descricao\": \"Batata frita\",\r\n                \"imagens\": [\r\n                    {\r\n                        \"path\": \"imagem 1\"\r\n                    }\r\n                ]\r\n            },\r\n            \"quantidade\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/pedidos/checkout",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"pedidos",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout pedido - Cliente informado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dataPedido\": \"31/10/2023\",\r\n    \"statusPedido\": 1,\r\n    \"cliente\": {\r\n        \"nome\": \"Nome do cliente\",\r\n        \"email\": \"email@email.com\",\r\n        \"cpf\": \"361.700.630-25\",\r\n        \"senha\": \"senha123\",\r\n        \"status\": true\r\n    },\r\n    \"produtos\": [\r\n        {\r\n            \"produto\": {\r\n                \"id\": 4,\r\n                \"nome\": \"Batata\",\r\n                \"categoria\": \"ACOMPANHAMENTO\",\r\n                \"valor\": 5.00,\r\n                \"descricao\": \"Batata frita\",\r\n                \"imagens\": [\r\n                    {\r\n                        \"path\": \"imagem 1\"\r\n                    }\r\n                ]\r\n            },\r\n            \"quantidade\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/pedidos/checkout",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"pedidos",
+								"checkout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar pedidos",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dataPedido\": \"31/10/2023\",\r\n    \"statusPedido\": 1,\r\n    \"cliente\": {\r\n        \"nome\": \"Nome do cliente\",\r\n        \"email\": \"email@email.com\",\r\n        \"cpf\": \"361.700.630-25\",\r\n        \"senha\": \"senha123\",\r\n        \"status\": true\r\n    },\r\n    \"produtos\": [\r\n        {\r\n            \"produto\": {\r\n                \"id\": 4,\r\n                \"nome\": \"Batata\",\r\n                \"categoria\": \"ACOMPANHAMENTO\",\r\n                \"valor\": 5.00,\r\n                \"descricao\": \"Batata frita\",\r\n                \"imagens\": [\r\n                    {\r\n                        \"path\": \"imagem 1\"\r\n                    }\r\n                ]\r\n            },\r\n            \"quantidade\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/pedidos",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar pedidos por id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dataPedido\": \"31/10/2023\",\r\n    \"statusPedido\": 1,\r\n    \"cliente\": {\r\n        \"nome\": \"Nome do cliente\",\r\n        \"email\": \"email@email.com\",\r\n        \"cpf\": \"361.700.630-25\",\r\n        \"senha\": \"senha123\",\r\n        \"status\": true\r\n    },\r\n    \"produtos\": [\r\n        {\r\n            \"produto\": {\r\n                \"id\": 4,\r\n                \"nome\": \"Batata\",\r\n                \"categoria\": \"ACOMPANHAMENTO\",\r\n                \"valor\": 5.00,\r\n                \"descricao\": \"Batata frita\",\r\n                \"imagens\": [\r\n                    {\r\n                        \"path\": \"imagem 1\"\r\n                    }\r\n                ]\r\n            },\r\n            \"quantidade\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/pedidos/:pedidoId",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"pedidos",
+								":pedidoId"
+							],
+							"variable": [
+								{
+									"key": "pedidoId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clientes",
+			"item": [
+				{
+					"name": "Atualizar cliente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Nome do cliente\",\r\n\t\"email\": \"email@email.com\",\r\n\t\"cpf\": \"361.700.630-25\",\r\n\t\"senha\": \"senha123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/clientes/:clienteId",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"clientes",
+								":clienteId"
+							],
+							"variable": [
+								{
+									"key": "clienteId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desativar cliente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/clientes/:clienteId",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"clientes",
+								":clienteId"
+							],
+							"variable": [
+								{
+									"key": "clienteId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Novo cliente",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nome\": \"Nome do cliente\",\r\n\t\"email\": \"email@email.com\",\r\n\t\"cpf\": \"361.700.630-25\",\r\n\t\"senha\": \"senha123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:32000/v1/clientes",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar cliente por id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/clientes/:clienteId",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"clientes",
+								":clienteId"
+							],
+							"variable": [
+								{
+									"key": "clienteId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar clientes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/clientes",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"clientes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pagamento",
+			"item": [
+				{
+					"name": "Consultar Histórico de Tentativa de Pagamento pelo Pedido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/pagamentos/historico/:numeroPedido",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"pagamentos",
+								"historico",
+								":numeroPedido"
+							],
+							"variable": [
+								{
+									"key": "numeroPedido",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Consulta Status Pagamento pelo Pedido",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:32000/v1/pagamentos/:numeroPedido",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "32000",
+							"path": [
+								"v1",
+								"pagamentos",
+								":numeroPedido"
+							],
+							"variable": [
+								{
+									"key": "numeroPedido",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
